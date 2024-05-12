@@ -4,18 +4,17 @@ const feedbackSchema = mongoose.Schema(
     {
         name: {
             type: String,
-            required: true,
-            unique : true
+            required : true
         },
         contact_no: {
             type: String,
             required: true,
-            unique : true
+            unique: true
         },
         email: {
             type: String,
             required: true,
-            unique : true
+            unique: true
         },
         emoji: {
             type: String,
