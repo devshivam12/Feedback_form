@@ -5,44 +5,39 @@ import { useForm } from 'react-hook-form'
 
 const Form = ({ getFeedbackData, setGetFeedbackData }) => {
     const { register, reset, handleSubmit, formState: { errors } } = useForm();
+
     const [scalling, setScalling] = useState(0)
     const [selectedEmoji, setSelectedEmoji] = useState('');
     const [error, setError] = useState(null)
 
-    const onSubmit = async (data) => {
-
-        const existingName = getFeedbackData.find(feedbackName => feedbackName.name.toLowerCase() === data.name.toLowerCase())
-
-        if (existingName) {
-            setError("Name already exist")
-            return
-        }
-
-        const existingNumber = getFeedbackData.find(feedbackNumber => feedbackNumber.contact_no.toLowerCase() === data.contact_no.toLowerCase())
-
-        if (existingNumber) {
-            setError("Contact number is already exist")
-            return
-        }
-
-        const existingEmail = getFeedbackData.find(feedbackEmail => feedbackEmail.email.toLowerCase() === data.email.toLowerCase())
-
-        if (existingEmail) {
-            setError("Email is already exist")
-        }
-
-        if(data.contact_no.length !== 10){
-            setError("Contact number should be 10 digit")
-            return
-        }
-
-        if(data.email.length === 0 || !/\S+@\S+\.\S+/.test(data.email)){
-            setError("Invalid email address")
-            return 
-
-        }
-
+    const onSubmit = async (data, e) => {
+        e.preventDefault()
         try {
+            const existingNumber = getFeedbackData.find(feedbackNumber => feedbackNumber.contact_no.toLowerCase() === data.contact_no.toLowerCase())
+
+            if (existingNumber) {
+                setError("Contact number is already exist")
+                return
+            }
+
+            const existingEmail = getFeedbackData.find(feedbackEmail => feedbackEmail.email.toLowerCase() === data.email.toLowerCase())
+
+            if (existingEmail) {
+                setError("Email is already exist")
+                return
+            }
+
+            if (data.contact_no.length !== 10) {
+                setError("Contact number should be 10 digit")
+                return
+            }
+
+            if (data.email.length === 0 || !/\S+@\S+\.\S+/.test(data.email)) {
+                setError("Invalid email address")
+                return
+            }
+
+
             const response = await axios.post("http://localhost:8000/api/feedback", data)
             alert("Data successfully submited")
             console.log("Data added successfull", response)
@@ -50,8 +45,12 @@ const Form = ({ getFeedbackData, setGetFeedbackData }) => {
             setSelectedEmoji("")
             setScalling(0);
             setError("")
+
+            setGetFeedbackData(prevData => [...prevData, response.data])
+            
         } catch (error) {
-            console.log("Please check the error", error)
+            console.log("Please check the error", error.response.data.message)
+
         }
 
     }

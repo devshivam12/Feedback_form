@@ -1,10 +1,13 @@
 import { useEffect, useState } from 'react'
 import Form from './component/Form'
 import axios from 'axios'
+
 function App() {
 
   const [getFeedbackData, setGetFeedbackData] = useState([])
+  
   console.log(getFeedbackData)
+
   const fetchData = async () => {
     try {
       const response = await axios.get("http://localhost:8000/api/feedback")
